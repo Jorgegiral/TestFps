@@ -38,7 +38,7 @@ public class EnemyAIBasic : MonoBehaviour
     }
     void Update()
     {
-        
+        EnemyStateUpdater();
     }
 
     void EnemyStateUpdater()
