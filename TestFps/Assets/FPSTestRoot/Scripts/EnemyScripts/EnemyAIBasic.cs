@@ -57,27 +57,76 @@ public class EnemyAIBasic : MonoBehaviour
 
     void Patroling()
     {
+        //Sistema de patrullaje
+        if(!walkPointSet)
+        {
+            //si no hay punto al que dirigirse, se genera un nuevo punto
+            SearchWalkPoint();
+        }
+        else
+        {
+            //si el punto generado es caminable el agente lo perseguirá
+            agent.SetDestination(walkPoint);
+        }
+
+        //Sistema para que el agente que busque un nuevo destino en caso de que haya llegado al punto actual
+        Vector3 distanceToWalkPoint = transform.position - walkPoint;
+        if (distanceToWalkPoint.magnitude < 1) walkPointSet = false;
 
     }
 
     void SearchWalkPoint()
     {
+        //Este método es un sistema de generación de puntos a perseguir por el agente
 
+        //Sistema de generación de puntos a patrullar random
+        float randomZ = Random.Range(-walkPointRange, walkPointRange);
+        float randomX = Random.Range(-walkPointRange, walkPointRange);
+
+        //Determinamos el nuevo punto random a perseguir 
+        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+
+        //Detección: si no hay suelo debajo, para evitar bucles infinitos
+        if (Physics.Raycast(walkPoint, -transform.up, 2f, GroundLayer))
+        {
+            walkPointSet = true; //confirmamos que el punto es caminable, por lo que empezará el movimiento
+        }
     }
 
     void ChaseTarget()
     {
-
+        //Una vez detecta al target, el agente lo persigue
+        agent.SetDestination(target.position);
     }
 
     void AttackTarget()
     {
+        //Cuando se comienza a atacar, el agente se queda quieto (se persigue a sí mismo)
+        agent.SetDestination(transform.position);
+        //El agente siempre observa directamente al target
+        transform.LookAt(target);
 
+        if (!alreadyAttacked)
+        {
+            //Si no estamos atacando, se comienza a atacar
+            //Aquì iria el código de ataque a personalizar
+
+            //En este ejemplo, vamos a generar una bala, referencia su rigibody y empujarla por fuerzas
+            Rigidbody rb = Instantiate(projectile, shootPoint.position, Quaternion.identity).GetComponent<Rigidbody>();
+            rb.AddForce(transform.forward * shootSpeedZ, ForceMode.Impulse);
+            //Si es modo catapulta, se añade la siguiente linea
+            //rb.AddForce(transform.up * shootSpeedY, ForceMode.Impulse);
+
+            //Se termina el ataque, empieza el cooldown de intervalo de ataque
+            alreadyAttacked = true;
+            Invoke(nameof(ResetAttack), timeBetweenAttacks); //Vuelve a atacar en el intervalo de tiempo indicado, se suele timear con la animación de ataque
+
+        }
     }
 
     void ResetAttack()
     {
-
+        alreadyAttacked = false;
     }
 
     //Función para que los gizmos de detección (perseguir/ataque) se dibujen en escena al seleccionar el objeto

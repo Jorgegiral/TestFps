@@ -338,6 +338,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b47d8a856fb707142955a109f48ff792, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 0}
+  target: {fileID: 0}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  GroundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  walkPoint: {x: 0, y: 0, z: 0}
+  walkPointRange: 4
+  timeBetweenAttacks: 1
+  projectile: {fileID: 7308212165341747908, guid: 71a8a7b551c372c4bb9086e50a9e2b14,
+    type: 3}
+  shootPoint: {fileID: 7679829186813149090}
+  shootSpeedZ: 8
+  shootSpeedY: 0
+  sightRange: 10
+  attackRange: 5
+  targetInSightRange: 0
+  targetInAttackRange: 0
 --- !u!195 &6928762218384857203
 NavMeshAgent:
   m_ObjectHideFlags: 0
